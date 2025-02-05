@@ -38,50 +38,65 @@ public class Tienda2025 implements Serializable {
     }
     
     //<editor-fold defaultstate="collapsed" desc="MENÚS">
-     private void menu() {
-        Scanner sc= new Scanner(System.in);
-        int opcion=0;
-        do {
-            System.out.println("1. PEDIDOS");
-            System.out.println("2. ARTÍCULOS");
-            System.out.println("3. CLIENTES");
-            System.out.println("9. SALIR");
+    private void menu() {
+    Scanner sc = new Scanner(System.in);
+    int opcion = 0;
+    do {
+        System.out.println("\n\n\n\n\n\t\t\t\tTIENDA\n");
+        System.out.println("\t\t\t\t1 - PEDIDOS");
+        System.out.println("\t\t\t\t2 - ARTICULOS");
+        System.out.println("\t\t\t\t3 - CLIENTES");
+        System.out.println("\t\t\t\t9 - SALIR");
+        try {
             opcion = sc.nextInt();
-            switch (opcion) {
-                case 1: {
-                    menuPedidos();
-                    break;
-                }
-                case 2: {
-                    menuArticulos();
-                    break;
-                }
-                case 3: {
-                    menuClientes();
-                    break;
-                }
-            }
-        } while (opcion != 9);
-    }
+        } catch (InputMismatchException e) {
+            System.out.println("Introduce un número válido.");
+            sc.nextLine(); 
+            continue;             }
+        
+        switch (opcion) {
+            case 1:
+                menuPedidos();
+                break;
+            case 2:
+                menuArticulos();
+                break;
+            case 3:
+                menuClientes();
+                break;
+            // No es necesario un case para 9, ya que se saldrá del bucle
+        }
+    } while (opcion != 9);
+}
+
+private void menuPedidos() {
+    Scanner sc = new Scanner(System.in);
+    int opcion = 0;
+    do {
+        System.out.println("\n\n\n\n\n\t\t\t\tPEDIDOS\n");
+        System.out.println("\t\t\t\t1 - NUEVO PEDIDO");
+        System.out.println("\t\t\t\t2 - ELIMINAR PEDIDO");
+        System.out.println("\t\t\t\t3 - MODIFICAR PEDIDO");
+        System.out.println("\t\t\t\t4 - LISTADOS DE PEDIDOS");
+        System.out.println("\t\t\t\t9 - SALIR");
+        
+        try {
+            opcion = sc.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Introduce un número válido.");
+            sc.nextLine(); 
+            continue;
+        }
+        
+        switch (opcion) {
+            case 1:
+                nuevoPedido();
+                break;
      
-    private void menuPedidos() {
-        Scanner sc= new Scanner(System.in);
-        int opcion=0;
-        do {
-            System.out.println("1. NUEVO PEDIDO");
-            System.out.println("2. ");
-            System.out.println("3. ");
-            System.out.println("9. SALIR");
-            opcion = sc.nextInt();
-            switch (opcion) {
-                case 1: {
-                    nuevoPedido();
-                    break;
-                }
-            }
-        } while (opcion != 9);
-    }
-    
+        }
+    } while (opcion != 9);
+}
+
     private void menuArticulos() {
         
     }
