@@ -52,5 +52,10 @@ public class Articulo {
     public void setPvp(double pvp) {
         this.pvp = pvp;
     }
-    
+    @Override
+public String toString() {
+    return String.format("Articulo [ID: %s, Descripcion: %s, Existencias: %d, PVP: %.2f]",
+            idArticulo, descripcion, existencias, pvp);
+}
+
 }

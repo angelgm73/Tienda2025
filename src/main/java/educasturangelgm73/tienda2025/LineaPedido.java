@@ -33,4 +33,8 @@ public class LineaPedido implements Serializable {
     public void setUnidades(int unidades) {
         this.unidades = unidades;
     }
+@Override
+public String toString() {
+    return "Articulo: " + idArticulo + ", Unidades: " + unidades;
+}
 }

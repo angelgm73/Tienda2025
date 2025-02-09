@@ -1,13 +1,7 @@
-
 package educasturangelgm73.tienda2025;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-
-/**
- *
- * @author alu10d
- */
 
 public class Pedido implements Serializable {
     
@@ -23,7 +17,6 @@ public class Pedido implements Serializable {
         this.cestaCompra = lineaPedido;
     }
 
-    
     public String getIdPedido() {
         return idPedido;
     }
@@ -39,9 +32,8 @@ public class Pedido implements Serializable {
     public ArrayList<LineaPedido> getCestaCompra() {
         return cestaCompra;
     }
-
     
-    
+   
     public void setIdPedido(String idPedido) {
         this.idPedido = idPedido;
     }
@@ -58,4 +50,18 @@ public class Pedido implements Serializable {
         this.cestaCompra = cestaCompra;
     }
     
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ID Pedido: ").append(idPedido).append("\n");
+        sb.append("Cliente: ").append(clientePedido.getNombre())
+          .append(" (").append(clientePedido.getDni()).append(")\n");
+        sb.append("Fecha: ").append(fechaPedido).append("\n");
+        sb.append("Cesta de Compra:\n");
+        for (LineaPedido lp : cestaCompra) {
+            sb.append("   ").append(lp).append("\n");
+        }
+        return sb.toString();
+    }
 }

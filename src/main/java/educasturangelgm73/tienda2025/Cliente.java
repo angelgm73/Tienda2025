@@ -1,10 +1,5 @@
 package educasturangelgm73.tienda2025;
 
-/**
- *
- * @author alu10d
- */
-
 public class Cliente {
     
     private String dni;
@@ -34,7 +29,6 @@ public class Cliente {
     public String getEmail() {
         return email;
     }
-    
 
     public void setDni(String dni) {
         this.dni = dni;
@@ -51,5 +45,9 @@ public class Cliente {
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
+    @Override
+    public String toString() {
+        return "DNI: " + dni + ", Nombre: " + nombre + ", Telefono: " + telefono + ", Email: " + email;
+    }
 }
