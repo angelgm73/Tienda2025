@@ -1,5 +1,6 @@
 package educasturangelgm73.tienda2025;
 
+import educasturangelgm73.tienda2025.Articulo.ComparadorPorOrden;
 import educasturangelgm73.tienda2025.Excepciones.StockAgotado;
 import educasturangelgm73.tienda2025.Excepciones.StockInsuficiente;
 import java.io.*;
@@ -334,9 +335,9 @@ public class Tienda2025 implements Serializable {
     
     private void listadoPedidos() {
         System.out.println("Listado de Pedidos:");
-        for (Pedido p : pedidos) {
-            System.out.println(p);
-        }
+       pedidos.stream().sorted(Comparator.comparing(p -> totalPedido(p))) .forEach(p -> System.out.println(p + "\t - IMPORTE TOTAL: " + totalPedido(p) + " Euro"));
+
+        
     }
     //</editor-fold>
     
@@ -402,12 +403,33 @@ public class Tienda2025 implements Serializable {
     }
     
     private void listadoArticulos() {
-        System.out.println("Listado de Articulos:");
-        for (Articulo art : articulos.values()) {
-            System.out.println(art);
-        }
-    
+        System.out.println("Como desea ver sus articulos todos juntos o por secciones?:");
+        int opcion = 0;
+        do {
+            
+            System.out.println("\t\t\t\t1 - TODOS");
+            System.out.println("\t\t\t\t2 - SECCION");
+             System.out.println("\t\t\t\t3 - SALIR");
+                     try {
+                opcion = sc.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Introduce un número válido.");
+                sc.nextLine(); 
+                continue;
+            }
+            
+            switch (opcion) {
+                case 1:
+                articulos.values().stream().sorted(new ComparadorPorOrden()).forEach(System.out::println);   
+                  
+                break;
+                case 2:
+             
+                    break;
+    }  } while (opcion != 3);
+        
     }
+        
      private void reponerArticulos(){
          System.out.println("Introduce el codigo del articulo a reponer");
          String id = sc.next();
@@ -496,6 +518,17 @@ public class Tienda2025 implements Serializable {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="OTROS MÉTODOS">
+    public double totalPedido (Pedido p){
+        double total=0;
+                for (LineaPedido L: p.getCestaCompra()){
+                    
+                
+                    
+        total+=(articulos.get(L.getIdArticulo()).getPvp())
+                *L.getUnidades();
+    }      
+            return total;
+    }         
     public void cargaDatos() {
         // Clientes iniciales
         clientes.put("80580845T", new Cliente("80580845T", "ANA", "658111111", "ana@gmail.com"));

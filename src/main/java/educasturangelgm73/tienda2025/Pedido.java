@@ -3,7 +3,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class Pedido implements Serializable {
+public class Pedido implements Serializable, Comparable<Pedido> {
     
     private String idPedido;
     private Cliente clientePedido;
@@ -32,8 +32,7 @@ public class Pedido implements Serializable {
     public ArrayList<LineaPedido> getCestaCompra() {
         return cestaCompra;
     }
-    
-   
+
     public void setIdPedido(String idPedido) {
         this.idPedido = idPedido;
     }
@@ -49,8 +48,12 @@ public class Pedido implements Serializable {
     public void setCestaCompra(ArrayList<LineaPedido> cestaCompra) {
         this.cestaCompra = cestaCompra;
     }
-    
-    
+
+    @Override
+    public int compareTo(Pedido p) {
+        return this.fechaPedido.compareTo(p.getFechaPedido());
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
