@@ -114,6 +114,7 @@ public class Tienda2025 implements Serializable {
             System.out.println("\t\t\t\t2 - MODIFICAR ARTICULO");
             System.out.println("\t\t\t\t3 - ELIMINAR ARTICULO");
             System.out.println("\t\t\t\t4 - LISTADO DE ARTICULOS");
+            System.out.println("\t\t\t\t5 - REPONER ARTICULO");
             System.out.println("\t\t\t\t9 - SALIR");
             
             try {
@@ -136,6 +137,9 @@ public class Tienda2025 implements Serializable {
                     break;
                 case 4:
                     listadoArticulos();
+                    break;
+                case 5:
+                    reponerArticulos();
                     break;
             }
         } while (opcion != 9);
@@ -387,22 +391,39 @@ public class Tienda2025 implements Serializable {
     
     private void eliminarArticulo() {
         Scanner sc = new Scanner(System.in);
-        System.out.print("Introduce el código del artículo a eliminar: ");
+        System.out.print("Introduce el codigo del articulo a eliminar: ");
         String id = sc.next();
         if (!articulos.containsKey(id)) {
-            System.out.println("El artículo no existe.");
+            System.out.println("El articulo no existe.");
             return;
         }
         articulos.remove(id);
-        System.out.println("Artículo eliminado.");
+        System.out.println("Articulo eliminado.");
     }
     
     private void listadoArticulos() {
-        System.out.println("Listado de Artículos:");
+        System.out.println("Listado de Articulos:");
         for (Articulo art : articulos.values()) {
             System.out.println(art);
         }
+    
     }
+     private void reponerArticulos(){
+         System.out.println("Introduce el codigo del articulo a reponer");
+         String id = sc.next();
+         if(!articulos.containsKey(id)){
+             System.out.println("El articulo no existe");
+             return;
+         }
+         int existencias = articulos.get(id).getExistencias();
+         System.out.println("La cantidad es actual de existencias es : " + existencias + " unidades.");
+         System.out.println("Cuantas unidades desea reponer?");
+         int reponer = sc.nextInt();
+         System.out.println("Articulos anadidos");
+         articulos.get(id).setExistencias(existencias + reponer);
+         System.out.println("La cantidad se ha actualizado a " + articulos.get(id).getExistencias());
+         
+              }
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="GESTIÓN DE CLIENTES">
