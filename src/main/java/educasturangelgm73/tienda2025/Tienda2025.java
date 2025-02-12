@@ -1,6 +1,7 @@
 package educasturangelgm73.tienda2025;
 
 import educasturangelgm73.tienda2025.Articulo.ComparadorPorOrden;
+import educasturangelgm73.tienda2025.Articulo.ComparadorPorSeccion;
 import educasturangelgm73.tienda2025.Excepciones.StockAgotado;
 import educasturangelgm73.tienda2025.Excepciones.StockInsuficiente;
 import java.io.*;
@@ -423,9 +424,59 @@ public class Tienda2025 implements Serializable {
                 articulos.values().stream().sorted(new ComparadorPorOrden()).forEach(System.out::println);   
                   
                 break;
-                case 2:
-             
-                    break;
+              case 2:
+            System.out.println("\n\n\n\n\n\t\t\t\t SECCIONES");
+            int opcion2 = 0;
+            do {
+                // Mostrar las opciones de secciones
+                System.out.println("\t\t\t\t1 - PERIFERICOS");
+                System.out.println("\t\t\t\t2 - DISCOS DUROS");
+                System.out.println("\t\t\t\t3 - IMPRESORAS");
+                System.out.println("\t\t\t\t4 - MONITORES");
+                System.out.println("\t\t\t\t5 - SALIR");
+
+                try {
+                    opcion2 = sc.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Introduce un número válido.");
+                    sc.nextLine();  
+                    continue;
+                }
+
+                
+                switch (opcion2) {
+                    case 1:
+                        System.out.println("Mostrando Perifericos");
+                      mostrarArticulosPorSeccion(articulos, "1");
+                      
+                        break;
+
+                    case 2:
+                        System.out.println("Mostrando Discos Duros");
+                    mostrarArticulosPorSeccion(articulos, "2");
+                      
+                        break;
+
+                    case 3:
+                        System.out.println("Mostrando Impresoras");
+                    mostrarArticulosPorSeccion(articulos, "3");
+                        break;
+
+                    case 4:
+                    System.out.println("Mostrando Monitores");
+                    mostrarArticulosPorSeccion(articulos, "4");    
+                      break;
+                      
+                    case 5:
+                        System.out.println("Saliendo de secciones...");
+                        break;
+
+                    default:
+                        System.out.println("Opcion no valida.");
+                        break;
+                }
+            } while (opcion2 != 5); 
+            break;
     }  } while (opcion != 3);
         
     }
@@ -518,6 +569,9 @@ public class Tienda2025 implements Serializable {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="OTROS MÉTODOS">
+     public static void mostrarArticulosPorSeccion(Map<String, Articulo> articulos, String seccion) {
+        articulos.values().stream().filter(articulo -> articulo.getIdArticulo().startsWith(seccion)) .sorted(new Articulo.ComparadorPorSeccion()) .forEach(System.out::println);
+    }
     public double totalPedido (Pedido p){
         double total=0;
                 for (LineaPedido L: p.getCestaCompra()){

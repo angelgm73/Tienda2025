@@ -87,4 +87,15 @@ public class Articulo {
                return a1.getIdArticulo().compareTo(a2.getIdArticulo());
         }
 }
+     public static class ComparadorPorSeccion implements Comparator<Articulo> {
+        @Override
+        public int compare(Articulo a1, Articulo a2) {
+            
+            String seccion1 = a1.getIdArticulo().substring(0, 1);
+            String seccion2 = a2.getIdArticulo().substring(0, 1);
+            
+           
+            return seccion1.compareTo(seccion2);
+        }
+    }
 }       
