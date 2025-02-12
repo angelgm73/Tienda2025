@@ -335,9 +335,32 @@ public class Tienda2025 implements Serializable {
     }
     
     private void listadoPedidos() {
-        System.out.println("Listado de Pedidos:");
-       pedidos.stream().sorted(Comparator.comparing(p -> totalPedido(p))) .forEach(p -> System.out.println(p + "\t - IMPORTE TOTAL: " + totalPedido(p) + " Euro"));
-
+        System.out.println("Como desea ver los pedidos");
+         int opcion= 0;
+         do{
+             System.out.println("\t\t\t\t1 - IMPORTE TOTAL");
+            System.out.println("\t\t\t\t2 - POR FECHA");
+             System.out.println("\t\t\t\t3 - IMPORTE QUE SE SOLICITA POR TECLADO");
+             System.out.println("\t\t\t\t4 - SALIR");
+                     try {
+                opcion = sc.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Introduce un número válido.");
+                sc.nextLine(); 
+                continue;
+            }
+               switch(opcion){
+                   case 1:
+                   pedidos.stream().sorted(Comparator.comparing(p -> totalPedido(p))) .forEach(p -> System.out.println(p + "\t - IMPORTE TOTAL: " + totalPedido(p) + " Euro"));
+                   break;
+                   case 2:
+                    pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido)).forEach(System.out::println);
+                   break;
+                   case 3:
+                       
+                   break;
+               }      
+         }while(opcion != 4 );
         
     }
     //</editor-fold>
