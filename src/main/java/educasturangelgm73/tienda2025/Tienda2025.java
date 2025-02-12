@@ -1,6 +1,8 @@
 package educasturangelgm73.tienda2025;
 
 import educasturangelgm73.tienda2025.Articulo.ComparadorPorOrden;
+import educasturangelgm73.tienda2025.Articulo.ComparadorPorPrecio;
+import educasturangelgm73.tienda2025.Articulo.ComparadorPorPrecio2;
 import educasturangelgm73.tienda2025.Articulo.ComparadorPorSeccion;
 import educasturangelgm73.tienda2025.Excepciones.StockAgotado;
 import educasturangelgm73.tienda2025.Excepciones.StockInsuficiente;
@@ -72,7 +74,7 @@ public class Tienda2025 implements Serializable {
     }
     
     private void menuPedidos() {
-        Scanner sc = new Scanner(System.in);
+        
         int opcion = 0;
         do {
             System.out.println("\n\n\n\n\n\t\t\t\tPEDIDOS");
@@ -108,7 +110,7 @@ public class Tienda2025 implements Serializable {
     }
     
     private void menuArticulos() {
-        Scanner sc = new Scanner(System.in);
+   
         int opcion = 0;
         do {
             System.out.println("\n\n\n\n\n\t\t\t\tARTICULOS");
@@ -148,7 +150,7 @@ public class Tienda2025 implements Serializable {
     }
     
     private void menuClientes() {
-        Scanner sc = new Scanner(System.in);
+       
         int opcion = 0;
         do {
             System.out.println("\n\n\n\n\n\t\t\t\tCLIENTES");
@@ -354,9 +356,12 @@ public class Tienda2025 implements Serializable {
                    pedidos.stream().sorted(Comparator.comparing(p -> totalPedido(p))) .forEach(p -> System.out.println(p + "\t - IMPORTE TOTAL: " + totalPedido(p) + " Euro"));
                    break;
                    case 2:
-                    pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido)).forEach(System.out::println);
+                    pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido)).forEach(p-> System.out.println("El pedido fue efectuado en la siguiente fecha: " + p.getFechaPedido() + " y el ID del pedido es: " + p.getIdPedido()));
                    break;
                    case 3:
+                       System.out.println("Introduce el importe minimo");
+                       Double importe = sc.nextDouble();
+                       pedidos.stream().filter(p -> totalPedido(p) > importe).forEach(p -> System.out.println("El cliente " + p.getClientePedido().getNombre()+" Compro " + p.getCestaCompra() + " IMPORTE TOTAL " + totalPedido(p) + " Euros"));
                        
                    break;
                }      
@@ -433,11 +438,13 @@ public class Tienda2025 implements Serializable {
             
             System.out.println("\t\t\t\t1 - TODOS");
             System.out.println("\t\t\t\t2 - SECCION");
-             System.out.println("\t\t\t\t3 - SALIR");
+            System.out.println("\t\t\t\t3 - DE MAS BARATO A MAS CARO ");
+            System.out.println("\t\t\t\t4 - DE MAS CARO A MAS BARATO ");
+             System.out.println("\t\t\t\t9 - SALIR");
                      try {
                 opcion = sc.nextInt();
             } catch (InputMismatchException e) {
-                System.out.println("Introduce un número válido.");
+                System.out.println("Introduce un numero válido.");
                 sc.nextLine(); 
                 continue;
             }
@@ -461,7 +468,7 @@ public class Tienda2025 implements Serializable {
                 try {
                     opcion2 = sc.nextInt();
                 } catch (InputMismatchException e) {
-                    System.out.println("Introduce un número válido.");
+                    System.out.println("Introduce un numero válido.");
                     sc.nextLine();  
                     continue;
                 }
@@ -500,7 +507,13 @@ public class Tienda2025 implements Serializable {
                 }
             } while (opcion2 != 5); 
             break;
-    }  } while (opcion != 3);
+              case 3:
+                  articulos.values().stream().sorted(new ComparadorPorPrecio()).forEach(System.out::println);
+               break;
+              case 4:
+                  articulos.values().stream().sorted(new ComparadorPorPrecio2()).forEach(System.out::println);
+              
+    }  } while (opcion != 9);
         
     }
         
@@ -524,7 +537,7 @@ public class Tienda2025 implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="GESTIÓN DE CLIENTES">
     private void nuevoCliente() {
-        Scanner sc = new Scanner(System.in);
+   
         System.out.print("Introduce el DNI del nuevo cliente: ");
         String dni = sc.next().toUpperCase();
         if (clientes.containsKey(dni)) {
@@ -543,7 +556,7 @@ public class Tienda2025 implements Serializable {
     }
     
     private void modificarCliente() {
-        Scanner sc = new Scanner(System.in);
+       
         System.out.print("Introduce el DNI del cliente a modificar: ");
         String dni = sc.next().toUpperCase();
         if (!clientes.containsKey(dni)) {
@@ -553,11 +566,7 @@ public class Tienda2025 implements Serializable {
         Cliente cliente = clientes.get(dni);
         System.out.println("Cliente actual: " + cliente);
         sc.nextLine(); // limpiar buffer
-        System.out.print("Introduce el nuevo nombre (dejar en blanco para no cambiar): ");
-        String nombre = sc.nextLine();
-        if (!nombre.isBlank()) {
-            cliente.setNombre(nombre);
-        }
+      
         System.out.print("Introduce el nuevo teléfono (dejar en blanco para no cambiar): ");
         String telefono = sc.nextLine();
         if (!telefono.isBlank()) {
@@ -572,7 +581,7 @@ public class Tienda2025 implements Serializable {
     }
     
     private void eliminarCliente() {
-        Scanner sc = new Scanner(System.in);
+       
         System.out.print("Introduce el DNI del cliente a eliminar: ");
         String dni = sc.next().toUpperCase();
         if (!clientes.containsKey(dni)) {
