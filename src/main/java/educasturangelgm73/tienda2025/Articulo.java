@@ -98,4 +98,10 @@ public class Articulo {
             return seccion1.compareTo(seccion2);
         }
     }
-}       
+      public static class ComparadorPorPrecio2 implements Comparator<Articulo> {
+        @Override
+        public int compare(Articulo a1, Articulo a2) {
+            return Double.compare(a2.getPvp(), a1.getPvp());
+        }
+}    
+}
