@@ -41,7 +41,7 @@ public class Tienda2025 implements Serializable {
         t.menu();
         
         t.backup();
-     
+        t.clientesTxtBackup();
     }
     
     //<editor-fold defaultstate="collapsed" desc="MENÚS">
@@ -748,6 +748,34 @@ public class Tienda2025 implements Serializable {
         }
        
     }   
+        /* MÉTODOS PARA PERSISTENCIA DE CLIENTES EN UN ARCHIVO DE TEXTO .csv */
+
+    public void clientesTxtBackup() {
+        try(BufferedWriter bfwClientes=new BufferedWriter(new FileWriter("clientes.csv"))){
+            for (Cliente c : clientes.values()) {
+                bfwClientes.write(c.getDni() + "," + c.getNombre() + "," + c.getTelefono() + "," + c.getEmail() + "\n");
+            }
+        }catch (FileNotFoundException e) {
+                 System.out.println(e.toString());   
+        }catch(IOException e){
+            System.out.println(e.toString());
+        }
+    }  
+    
+    public void clientesTxtLeer() {
+        // LEEMOS LOS CLIENTES DESDE EL ARCHIVO .csv A UNA COLECCION HASHMAP AUXILIAR Y LA IMPRIMIMOS
+        HashMap <String,Cliente> clientesAux = new HashMap();
+        try(Scanner scClientes=new Scanner(new File("clientes.csv"))){
+            while (scClientes.hasNextLine()){
+                String [] atributos = scClientes.nextLine().split("[,]");                                                              
+                Cliente c=new Cliente(atributos[0],atributos[1],atributos[2],atributos[3]); 
+                clientesAux.put(atributos[0], c);
+            }
+        }catch(IOException e){
+            System.out.println(e.toString());
+        }
+        clientesAux.values().forEach(System.out::println);
+    }  
     
        //</editor-fold>
 }
