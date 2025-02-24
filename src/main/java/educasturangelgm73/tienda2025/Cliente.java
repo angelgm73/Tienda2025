@@ -1,6 +1,8 @@
 package educasturangelgm73.tienda2025;
 
-public class Cliente {
+import java.io.Serializable;
+
+public class Cliente implements Serializable {
     
     private String dni;
     private String nombre;

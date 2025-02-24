@@ -6,9 +6,10 @@ package educasturangelgm73.tienda2025;
  * @author alu10d
  */
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class Articulo {
+public class Articulo implements Serializable {
     
     private String idArticulo;
     private String descripcion;
