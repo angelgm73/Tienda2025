@@ -41,6 +41,7 @@ public class Tienda2025 implements Serializable {
         t.menu();
         
         t.backup();
+     
     }
     
     //<editor-fold defaultstate="collapsed" desc="MENÚS">
@@ -122,6 +123,7 @@ public class Tienda2025 implements Serializable {
             System.out.println("\t\t\t\t3 - ELIMINAR ARTICULO");
             System.out.println("\t\t\t\t4 - LISTADO DE ARTICULOS");
             System.out.println("\t\t\t\t5 - REPONER ARTICULO");
+            System.out.println("\t\t\t\t6 - COPIA DE SEGURIDAD POR SECCIONES");
             System.out.println("\t\t\t\t9 - SALIR");
             
             try {
@@ -148,6 +150,9 @@ public class Tienda2025 implements Serializable {
                 case 5:
                     reponerArticulos();
                     break;
+                case 6:
+                    backupPorSeccion();
+                       break;
             }
         } while (opcion != 9);
     }
@@ -651,7 +656,34 @@ public class Tienda2025 implements Serializable {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="PERSISTENCIA">
-    public void backup() {
+    public void backupPorSeccion() {
+        try (ObjectOutputStream oosPerifericos = new ObjectOutputStream(new FileOutputStream("perifericos.dat"));
+            ObjectOutputStream oosAlmacenamiento = new ObjectOutputStream(new FileOutputStream("almacenamiento.dat"));
+            ObjectOutputStream oosImpresoras = new ObjectOutputStream (new FileOutputStream("impresoras.dat")) ;
+         ObjectOutputStream oosMonitores = new ObjectOutputStream (new FileOutputStream("monitores.dat"))) {
+	   	   
+          for (Articulo a : articulos.values()) {
+            String id = a.getIdArticulo(); 
+
+            if (id.startsWith("1-")) { 
+                oosPerifericos.writeObject(a);
+            } else if (id.startsWith("2-")) { 
+                oosAlmacenamiento.writeObject(a);
+            } else if (id.startsWith("3-")) { 
+                oosImpresoras.writeObject(a);
+            } else if (id.startsWith("4-")) { 
+                oosMonitores.writeObject(a);
+            }
+        }
+
+        System.out.println("Copia de seguridad realizada con exito por secciones."); 
+        } catch (FileNotFoundException e) {
+                 System.out.println(e.toString());                                                          
+        } catch (IOException e) {
+                 System.out.println(e.toString());
+        } 
+    }  
+    public void backup(){
         try (ObjectOutputStream oosArticulos = new ObjectOutputStream(new FileOutputStream("articulos.dat"));
             ObjectOutputStream oosClientes = new ObjectOutputStream(new FileOutputStream("clientes.dat"));
             ObjectOutputStream oosPedidos = new ObjectOutputStream (new FileOutputStream("pedidos.dat"))) {
@@ -672,8 +704,8 @@ public class Tienda2025 implements Serializable {
         } catch (IOException e) {
                  System.out.println(e.toString());
         } 
-    }  
-    
+        
+    }
     public void leerArchivos() {
         try (ObjectInputStream oisArticulos = new ObjectInputStream(new FileInputStream("articulos.dat"))){
             Articulo a;
