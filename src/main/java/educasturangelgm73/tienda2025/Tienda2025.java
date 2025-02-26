@@ -41,7 +41,7 @@ public class Tienda2025 implements Serializable {
         t.menu();
         
         t.backup();
-        t.clientesTxtBackup();
+      
     }
     
     //<editor-fold defaultstate="collapsed" desc="MENÚS">
@@ -72,7 +72,7 @@ public class Tienda2025 implements Serializable {
                 case 3:
                     menuClientes();
                     break;
-                // No es necesario un case para 9, se sale del bucle
+           
             }
         } while (opcion != 9);
     }
@@ -86,6 +86,8 @@ public class Tienda2025 implements Serializable {
             System.out.println("\t\t\t\t2 - ELIMINAR PEDIDO");
             System.out.println("\t\t\t\t3 - MODIFICAR PEDIDO");
             System.out.println("\t\t\t\t4 - LISTADO DE PEDIDOS");
+           System.out.println("\t\t\t\t5 - BACKUP POR IMPORTE");
+             System.out.println("\t\t\t\t6 - LEER PEDIDOS POR IMPORTE");
             System.out.println("\t\t\t\t9 - SALIR");
             
             try {
@@ -108,6 +110,12 @@ public class Tienda2025 implements Serializable {
                     break;
                 case 4:
                     listadoPedidos();
+                    break;
+                case 5:
+                    pedidosPorImporteBackup();
+                    break;
+                case 6:
+                    leerPedidosPorImporte();
                     break;
             }
         } while (opcion != 9);
@@ -166,6 +174,8 @@ public class Tienda2025 implements Serializable {
             System.out.println("\t\t\t\t2 - MODIFICAR CLIENTE");
             System.out.println("\t\t\t\t3 - ELIMINAR CLIENTE");
             System.out.println("\t\t\t\t4 - LISTADO DE CLIENTES");
+            System.out.println("\t\t\t\t4 - HACER BACK UP CLIENTES CSV");
+            System.out.println("\t\t\t\t5 - LEER BACKUP CLIENTES CSV");
             System.out.println("\t\t\t\t9 - SALIR");
             
             try {
@@ -189,6 +199,13 @@ public class Tienda2025 implements Serializable {
                 case 4:
                     listadoClientes();
                     break;
+                case 5:
+                    clientesTxtBackup();
+                    break;
+                case 6:
+                    clientesTxtLeer();
+                    break;
+                    
             }
         } while (opcion != 9);
     }
@@ -776,6 +793,50 @@ public class Tienda2025 implements Serializable {
         }
         clientesAux.values().forEach(System.out::println);
     }  
+    public void pedidosPorImporteBackup() {
+    try (ObjectOutputStream oosPedidosImporte = new ObjectOutputStream(new FileOutputStream("pedidos_por_importe.dat"))) {
+        // Ordenamos los pedidos por importe total (de mayor a menor)
+        List<Pedido> pedidosOrdenados = new ArrayList<>(pedidos);
+        pedidosOrdenados.sort((p1, p2) -> Double.compare(totalPedido(p2), totalPedido(p1)));
+        
+        // Guardamos cada pedido en el archivo
+        for (Pedido p : pedidosOrdenados) {
+            oosPedidosImporte.writeObject(p);
+        }
+        
+        System.out.println("Copia de seguridad de pedidos por importe realizada con éxito.");
+    } catch (FileNotFoundException e) {
+        System.out.println(e.toString());
+    } catch (IOException e) {
+        System.out.println(e.toString());
+    }
+}
+    public void leerPedidosPorImporte() {
+    List<Pedido> pedidosImporte = new ArrayList<>();
     
+    try (ObjectInputStream oisPedidosImporte = new ObjectInputStream(new FileInputStream("pedidos_por_importe.dat"))) {
+        Pedido p;
+        while ((p = (Pedido) oisPedidosImporte.readObject()) != null) {
+            pedidosImporte.add(p);
+        }
+    } catch (FileNotFoundException e) {
+        System.out.println("Archivo no encontrado: " + e.toString());
+    } catch (EOFException e) {
+        // Fin del archivo alcanzado (comportamiento normal)
+    } catch (ClassNotFoundException | IOException e) {
+        System.out.println(e.toString());
+    }
+    
+    // Mostramos los pedidos recuperados con su importe
+    System.out.println("PEDIDOS ORDENADOS POR IMPORTE:");
+    System.out.println("ID_PEDIDO\tCLIENTE\tFECHA\tIMPORTE");
+    for (Pedido p : pedidosImporte) {
+        System.out.printf("%s\t%s\t%s\t%.2f€\n", 
+                p.getIdPedido(), 
+                p.getClientePedido().getNombre(),
+                p.getFechaPedido(),
+                totalPedido(p));
+    }
+}
        //</editor-fold>
 }
