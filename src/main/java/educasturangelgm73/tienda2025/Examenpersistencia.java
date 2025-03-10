@@ -5,11 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -34,10 +31,13 @@ public class Examenpersistencia {
         Examenpersistencia t = new Examenpersistencia();
 
         t.cargaDatos();
-        t.iniciosesion();
+
+        t.menu();
+
 
     }
-    private void iniciosesion(){
+
+    private void iniciosesion() {
         System.out.println("Bienvenido al sistema de tienda");
         System.out.println("Deberas iniciar session para continuar");
         int opcion = 0;
@@ -49,7 +49,7 @@ public class Examenpersistencia {
             System.out.println("\t\t╠════════════════════════════════════════════════╣");
             System.out.println("\t\t║  1 - Iniciar sesion                            ║");
             System.out.println("\t\t║  2 - Registrar usuario                         ║");
-            System.out.println("\t\t║  3 - Eliminar usuario                          ║");
+            System.out.println("\t\t║  3 - Ver usuario                               ║");
             System.out.println("\t\t║                                                ║");
             System.out.println("\t\t║                                                ║");
             System.out.println("\t\t║  9 - SALIR                                     ║");
@@ -72,11 +72,11 @@ public class Examenpersistencia {
                     registrarUsuario();
                     break;
                 case 3:
-                    clientesTxtLeerCon();
+                    verUsuarios();
                     break;
-                case 4:
-                    clientesTxtLeerSin();
-                    break;
+
+
+
             }
         } while (opcion != 9);
 
@@ -118,7 +118,7 @@ public class Examenpersistencia {
         Scanner sc = new Scanner(System.in);
         System.out.println("Introduce tu nombre de usuario");
         String nombre = sc.nextLine();
-    //
+        //
         System.out.println("Introduce tu correo electronico ");
         String correo = sc.nextLine();
 
@@ -135,6 +135,19 @@ public class Examenpersistencia {
             System.out.println(e.toString());
         }
     }
+
+    private void verUsuarios() {
+        try (Scanner fileScanner = new Scanner(new File("usuarios.csv"))) {
+            while (fileScanner.hasNextLine()) {
+                String[] userInfo = fileScanner.nextLine().split(",");
+                System.out.println("|Nombre de usuario:" + userInfo[0] + " |" + "|Correo electronico:" + userInfo[1] + " |");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("El archivo usuarios.csv no existe. Registre usuarios primero.");
+        }
+
+    }
+
     private void menu() {
         int opcion = 0;
         do {
@@ -164,7 +177,7 @@ public class Examenpersistencia {
                     exportarTodosClientes();
                     break;
                 case 2:
-                 clientesTxtLeer1000();
+                    clientesTxtLeer1000();
                     break;
                 case 3:
                     clientesTxtLeerCon();
@@ -172,6 +185,14 @@ public class Examenpersistencia {
                 case 4:
                     clientesTxtLeerSin();
                     break;
+                case 5:
+                    pedidosClientes();
+                    break;
+                case 6:
+                    articuloIdVendido();
+                    break;
+
+
             }
         } while (opcion != 9);
     }
@@ -261,16 +282,17 @@ public class Examenpersistencia {
         double total = 0;
         for (Pedido pedido : pedidos) {
             if (pedido.getClientePedido().equals(c)) {
-             total+=total+totalPedido(pedido);
+                total += total + totalPedido(pedido);
             }
         }
         return total;
     }
+
     private boolean pedidoRealizado(String dni) {
         return
                 pedidos.stream().anyMatch(p -> p.getClientePedido().getDni().equals(dni));
     }
-
+    
     public void clientesTxtLeerCon() {
         // LEEMOS LOS CLIENTES DESDE EL ARCHIVO .csv A UNA COLECCION HASHMAP AUXILIAR Y LA IMPRIMIMOS
         HashMap<String, Cliente> clientesAux = new HashMap();
@@ -300,6 +322,7 @@ public class Examenpersistencia {
         }
         clientesAux.values().forEach(System.out::println);
     }
+
     public void clientesTxtLeer1000() {
         // LEEMOS LOS CLIENTES DESDE EL ARCHIVO .csv A UNA COLECCION HASHMAP AUXILIAR Y LA IMPRIMIMOS
         HashMap<String, Cliente> clientesAux = new HashMap();
@@ -314,15 +337,62 @@ public class Examenpersistencia {
         }
         clientesAux.values().forEach(System.out::println);
     }
-    public double totalPedido (Pedido p){
-        double total=0;
-        for (LineaPedido L: p.getCestaCompra()){
+
+    public double totalPedido(Pedido p) {
+        double total = 0;
+        for (LineaPedido L : p.getCestaCompra()) {
 
 
-
-            total+=(articulos.get(L.getIdArticulo()).getPvp())
-                    *L.getUnidades();
+            total += (articulos.get(L.getIdArticulo()).getPvp())
+                    * L.getUnidades();
         }
         return total;
     }
+
+    public void pedidosClientes() {
+        try (BufferedWriter bfwClientesPedidos = new BufferedWriter(new FileWriter("clientesPedidos.csv"))) {
+       for (Cliente c : clientes.values()) {
+           String dni= c.getDni();
+
+           bfwClientesPedidos.write(c.getDni() + "," + c.getNombre() + "," + c.getTelefono() + "," + c.getEmail()  + " Tiene tantos pedidos " + pedidos.stream().filter(p->p.getClientePedido().equals(c)).count() + "\n");
+       }
+
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.toString());
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+        }
+    public void articuloIdVendido( ){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Introduce el id del articulo:");
+        String idArticulo = sc.nextLine();
+
+        boolean encontrado = false;
+
+        for (Pedido p : pedidos) {
+            int cantidadVendida = 0;
+
+            // Contar manualmente cuántas veces aparece el artículo en la cesta
+            for (LineaPedido linea : p.getCestaCompra()) {
+                if (linea.getIdArticulo().equals(idArticulo)) {
+                    cantidadVendida++;
+                }
+            }
+
+            if (cantidadVendida > 0) {
+                System.out.println("El articulo con id " + idArticulo + " se ha vendido " +
+                        cantidadVendida + " veces en el pedido " + p.getIdPedido());
+                encontrado = true;
+            }
+        }
+
+        if (!encontrado) {
+            System.out.println("El articulo con id " + idArticulo + " no se ha vendido en ningún pedido");
+        }
+
+    }
+
+// si me das un id de articulo, dime cuantos de esos articulos se venden en cada pedido
 }
