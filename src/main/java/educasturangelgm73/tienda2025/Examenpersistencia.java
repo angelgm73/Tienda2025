@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,9 +34,107 @@ public class Examenpersistencia {
         Examenpersistencia t = new Examenpersistencia();
 
         t.cargaDatos();
-        t.menu();
+        t.iniciosesion();
+
+    }
+    private void iniciosesion(){
+        System.out.println("Bienvenido al sistema de tienda");
+        System.out.println("Deberas iniciar session para continuar");
+        int opcion = 0;
+        do {
+            System.out.println("\n\n\n");
+            System.out.println("\t\t╔════════════════════════════════════════════════╗");
+            System.out.println("\t\t║        Bienvenido al sistema de tienda         ║");
+            System.out.println("\t\t╠        Deberas iniciar sesion para continuar   ╣");
+            System.out.println("\t\t╠════════════════════════════════════════════════╣");
+            System.out.println("\t\t║  1 - Iniciar sesion                            ║");
+            System.out.println("\t\t║  2 - Registrar usuario                         ║");
+            System.out.println("\t\t║  3 - Eliminar usuario                          ║");
+            System.out.println("\t\t║                                                ║");
+            System.out.println("\t\t║                                                ║");
+            System.out.println("\t\t║  9 - SALIR                                     ║");
+            System.out.println("\t\t╚════════════════════════════════════════════════╝");
+            System.out.print("\t\tSeleccione una opción: ");
+
+            try {
+                opcion = sc.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("\t\t⚠️  Introduce un número válido.");
+                sc.nextLine();
+                continue;
+            }
+
+            switch (opcion) {
+                case 1:
+                    iniciosesion1();
+                    break;
+                case 2:
+                    registrarUsuario();
+                    break;
+                case 3:
+                    clientesTxtLeerCon();
+                    break;
+                case 4:
+                    clientesTxtLeerSin();
+                    break;
+            }
+        } while (opcion != 9);
+
+
     }
 
+    private void iniciosesion1() {
+        System.out.println("Introduce tu nombre de usuario");
+        sc.nextLine(); // Clear scanner buffer
+        String nombre = sc.nextLine();
+        System.out.println("Introduce tu contraseña");
+        String contraseña = sc.nextLine();
+
+        boolean credencialesValidas = false;
+
+        try (Scanner fileScanner = new Scanner(new File("usuarios.csv"))) {
+            while (fileScanner.hasNextLine()) {
+                String[] userInfo = fileScanner.nextLine().split(",");
+                if (userInfo.length >= 3 && userInfo[0].equals(nombre) && userInfo[2].equals(contraseña)) {
+                    credencialesValidas = true;
+                    break;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("El archivo usuarios.csv no existe. Registre usuarios primero.");
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo: " + e.getMessage());
+        }
+
+        if (credencialesValidas) {
+            System.out.println("Inicio de sesión exitoso. Bienvenido " + nombre + "!");
+            menu();
+        } else {
+            System.out.println("Nombre de usuario o contraseña incorrectos.");
+        }
+    }
+
+    private void registrarUsuario() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Introduce tu nombre de usuario");
+        String nombre = sc.nextLine();
+    //
+        System.out.println("Introduce tu correo electronico ");
+        String correo = sc.nextLine();
+
+        System.out.println("Introduce tu contrasena");
+        String contrasena = sc.nextLine();
+
+        // Usar true como segundo parámetro para añadir al archivo en lugar de sobrescribirlo
+        try (BufferedWriter bfwClientesCon = new BufferedWriter(new FileWriter("usuarios.csv", true))) {
+            bfwClientesCon.write(nombre + "," + correo + "," + contrasena + "\n");
+            System.out.println("Usuario registrado correctamente");
+        } catch (FileNotFoundException e) {
+            System.out.println(e.toString());
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+    }
     private void menu() {
         int opcion = 0;
         do {
