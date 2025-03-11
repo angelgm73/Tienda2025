@@ -6,11 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class Examenpersistencia {
@@ -364,35 +360,27 @@ public class Examenpersistencia {
             System.out.println(e.toString());
         }
         }
-    public void articuloIdVendido( ){
+    public void articuloIdVendido(){
         Scanner sc = new Scanner(System.in);
+
         System.out.println("Introduce el id del articulo:");
-        String idArticulo = sc.nextLine();
-
-        boolean encontrado = false;
-
+        String idArticulo = sc.next();
+        pedidos.stream().filter(p -> p.getCestaCompra().stream().anyMatch(l -> l.getIdArticulo().equals(idArticulo))).forEach(System.out::println);
         for (Pedido p : pedidos) {
-            int cantidadVendida = 0;
+            System.out.println("El articulo con id " + idArticulo + " se ha vendido " +
+                    articuloEnPedido(idArticulo, p) + " veces en el pedido " + p.getIdPedido());
 
-            // Contar manualmente cuántas veces aparece el artículo en la cesta
-            for (LineaPedido linea : p.getCestaCompra()) {
-                if (linea.getIdArticulo().equals(idArticulo)) {
-                    cantidadVendida++;
-                }
-            }
-
-            if (cantidadVendida > 0) {
-                System.out.println("El articulo con id " + idArticulo + " se ha vendido " +
-                        cantidadVendida + " veces en el pedido " + p.getIdPedido());
-                encontrado = true;
-            }
         }
+    }
+    public int articuloEnPedido (String idArticulo, Pedido p) {
+        try {
 
-        if (!encontrado) {
-            System.out.println("El articulo con id " + idArticulo + " no se ha vendido en ningún pedido");
+            return p.getCestaCompra().stream().filter(l -> l.getIdArticulo().equals(idArticulo)).findFirst().get().getUnidades();
+
+        } catch (NoSuchElementException e) {
+            return 0;
         }
 
     }
-
-// si me das un id de articulo, dime cuantos de esos articulos se venden en cada pedido
+// un listado cuando recibe un id articulo ordenado de mayor a menor con streams, cual es el articulo mas vendido y el que menos con streams
 }
