@@ -101,7 +101,7 @@ import java.util.Scanner;
                     leerArchivos();
                     break;
                 case 3:
-
+                    ordenarClientesGasto();
                     break;
 
             }
@@ -175,5 +175,35 @@ import java.util.Scanner;
             System.out.println("Error al leer el archivo: " + e.getMessage());
         }
     }
+    public void ordenarClientesGasto() {
+        Map<Cliente, Double> gastoPorCliente = new HashMap<>();
+
+
+        for (Pedido pedido : pedidos) {
+            Cliente cliente = pedido.getClientePedido();
+            double totalPedido = 0;
+
+            for (LineaPedido linea : pedido.getCestaCompra()) {
+                Articulo articulo = articulos.get(linea.getIdArticulo()); // Corregido
+                if (articulo != null) {
+                    totalPedido += linea.getUnidades() * articulo.getPvp();
+                }
+            }
+
+
+            gastoPorCliente.put(cliente, gastoPorCliente.getOrDefault(cliente, 0.0) + totalPedido);
+        }
+
+
+        List<Map.Entry<Cliente, Double>> listaOrdenada = new ArrayList<>(gastoPorCliente.entrySet());
+        listaOrdenada.sort((a, b) -> Double.compare(b.getValue(), a.getValue())); // Orden descendente
+
+
+        System.out.println("\nClientes ordenados por gasto total:");
+        for (Map.Entry<Cliente, Double> entry : listaOrdenada) {
+            System.out.printf("Cliente: %s | Gasto Total: %.2f€\n", entry.getKey().getNombre(), entry.getValue());
+        }
     }
+
+}
 
