@@ -6,13 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class Examenpersistencia {
@@ -33,44 +27,168 @@ public class Examenpersistencia {
         Examenpersistencia t = new Examenpersistencia();
 
         t.cargaDatos();
+
         t.menu();
+
+
     }
 
-    private void menu() {
+    private void iniciosesion() {
+        System.out.println("Bienvenido al sistema de tienda");
+        System.out.println("Deberas iniciar session para continuar");
         int opcion = 0;
         do {
-            System.out.println("╔═══════════════════════════════════════════════════════════╗");
-            System.out.println("║                        TIENDA                             ║");
-            System.out.println("╠═══════════════════════════════════════════════════════════╣");
-            System.out.println("║  1 - Hacer csv de clientes con pedidos realizados         ║");
-            System.out.println("║  2 - Hacer csv de clientes sin pedidos realizados         ║");
-            System.out.println("║  3 - Leer csv de clientes con pedidos realizados          ║");
-            System.out.println("║  4 - Leer csv de clientes sin pedidos realizados          ║");
-            System.out.println("║                                                           ║");
-            System.out.println("║  9 - SALIR                                                ║");
-            System.out.println("╚═══════════════════════════════════════════════════════════╝");
-            System.out.print("Introduce una opción: ");
+            System.out.println("\n\n\n");
+            System.out.println("\t\t╔════════════════════════════════════════════════╗");
+            System.out.println("\t\t║        Bienvenido al sistema de tienda         ║");
+            System.out.println("\t\t╠        Deberas iniciar sesion para continuar   ╣");
+            System.out.println("\t\t╠════════════════════════════════════════════════╣");
+            System.out.println("\t\t║  1 - Iniciar sesion                            ║");
+            System.out.println("\t\t║  2 - Registrar usuario                         ║");
+            System.out.println("\t\t║  3 - Ver usuario                               ║");
+            System.out.println("\t\t║                                                ║");
+            System.out.println("\t\t║                                                ║");
+            System.out.println("\t\t║  9 - SALIR                                     ║");
+            System.out.println("\t\t╚════════════════════════════════════════════════╝");
+            System.out.print("\t\tSeleccione una opción: ");
 
             try {
                 opcion = sc.nextInt();
             } catch (InputMismatchException e) {
-                System.out.println("Introduce un número válido.");
+                System.out.println("\t\t⚠️  Introduce un número válido.");
                 sc.nextLine();
                 continue;
             }
 
             switch (opcion) {
                 case 1:
-                    escribirClientesConYSin();
+                    iniciosesion1();
                     break;
                 case 2:
+                    registrarUsuario();
+                    break;
+                case 3:
+                    verUsuarios();
+                    break;
 
+
+
+            }
+        } while (opcion != 9);
+
+
+    }
+
+    private void iniciosesion1() {
+        System.out.println("Introduce tu nombre de usuario");
+        sc.nextLine(); // Clear scanner buffer
+        String nombre = sc.nextLine();
+        System.out.println("Introduce tu contraseña");
+        String contraseña = sc.nextLine();
+
+        boolean credencialesValidas = false;
+
+        try (Scanner fileScanner = new Scanner(new File("usuarios.csv"))) {
+            while (fileScanner.hasNextLine()) {
+                String[] userInfo = fileScanner.nextLine().split(",");
+                if (userInfo.length >= 3 && userInfo[0].equals(nombre) && userInfo[2].equals(contraseña)) {
+                    credencialesValidas = true;
+                    break;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("El archivo usuarios.csv no existe. Registre usuarios primero.");
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo: " + e.getMessage());
+        }
+
+        if (credencialesValidas) {
+            System.out.println("Inicio de sesión exitoso. Bienvenido " + nombre + "!");
+            menu();
+        } else {
+            System.out.println("Nombre de usuario o contraseña incorrectos.");
+        }
+    }
+
+    private void registrarUsuario() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Introduce tu nombre de usuario");
+        String nombre = sc.nextLine();
+        //
+        System.out.println("Introduce tu correo electronico ");
+        String correo = sc.nextLine();
+
+        System.out.println("Introduce tu contrasena");
+        String contrasena = sc.nextLine();
+
+        // Usar true como segundo parámetro para añadir al archivo en lugar de sobrescribirlo
+        try (BufferedWriter bfwClientesCon = new BufferedWriter(new FileWriter("usuarios.csv", true))) {
+            bfwClientesCon.write(nombre + "," + correo + "," + contrasena + "\n");
+            System.out.println("Usuario registrado correctamente");
+        } catch (FileNotFoundException e) {
+            System.out.println(e.toString());
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    private void verUsuarios() {
+        try (Scanner fileScanner = new Scanner(new File("usuarios.csv"))) {
+            while (fileScanner.hasNextLine()) {
+                String[] userInfo = fileScanner.nextLine().split(",");
+                System.out.println("|Nombre de usuario:" + userInfo[0] + " |" + "|Correo electronico:" + userInfo[1] + " |");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("El archivo usuarios.csv no existe. Registre usuarios primero.");
+        }
+
+    }
+
+    private void menu() {
+        int opcion = 0;
+        do {
+            System.out.println("\n\n\n");
+            System.out.println("\t\t╔════════════════════════════════════════════════╗");
+            System.out.println("\t\t║                    TIENDA                      ║");
+            System.out.println("\t\t╠════════════════════════════════════════════════╣");
+            System.out.println("\t\t║  1 - Hacer csv de ambos clientes               ║");
+            System.out.println("\t\t║  2 - Clientes con mas de 1000 €                ║");
+            System.out.println("\t\t║  3 - Leer csv de clientes con pedidos          ║");
+            System.out.println("\t\t║  4 - Leer csv de clientes sin pedidos          ║");
+            System.out.println("\t\t║                                                ║");
+            System.out.println("\t\t║  9 - SALIR                                     ║");
+            System.out.println("\t\t╚════════════════════════════════════════════════╝");
+            System.out.print("\t\tSeleccione una opción: ");
+
+            try {
+                opcion = sc.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("\t\t⚠️  Introduce un número válido.");
+                sc.nextLine();
+                continue;
+            }
+
+            switch (opcion) {
+                case 1:
+                    exportarTodosClientes();
+                    break;
+                case 2:
+                    clientesTxtLeer1000();
+                    break;
                 case 3:
                     clientesTxtLeerCon();
                     break;
                 case 4:
                     clientesTxtLeerSin();
                     break;
+                case 5:
+                    pedidosClientes();
+                    break;
+                case 6:
+                    articuloIdVendido();
+                    break;
+
+
             }
         } while (opcion != 9);
     }
@@ -113,29 +231,33 @@ public class Examenpersistencia {
 
     }
 
-    private void escribirClientesConYSin() {
+    private void exportarTodosClientes() {
         try (BufferedWriter bfwClientesCon = new BufferedWriter(new FileWriter("clientescon.csv"));
+             BufferedWriter bfwClientes1000 = new BufferedWriter(new FileWriter("clientes1000.csv"));
              BufferedWriter bfwClientesSin = new BufferedWriter(new FileWriter("clientessin.csv"))) {
 
             for (Cliente c : clientes.values()) {
+                String lineaCliente = c.getDni() + "," + c.getNombre() + "," + c.getTelefono() + "," + c.getEmail() + "\n";
+
+                // Pasar objeto Cliente en lugar de DNI
+                if (gastoTotal(c) >= 1000) {
+                    bfwClientes1000.write(lineaCliente);
+                }
+
                 if (pedidoRealizado(c.getDni())) {
-                    // Escribir en archivo clientescon.csv
-                    bfwClientesCon.write(c.getDni() + "," +
-                            c.getNombre() + "," +
-                            c.getTelefono() + "," +
-                            c.getEmail() + "\n");
+                    bfwClientesCon.write(lineaCliente);
                 } else {
-                    // Escribir en archivo clientessin.csv
-                    bfwClientesSin.write(c.getDni() + "," +
-                            c.getNombre() + "," +
-                            c.getTelefono() + "," +
-                            c.getEmail() + "\n");
+                    bfwClientesSin.write(lineaCliente);
                 }
             }
+        } catch (FileNotFoundException e) {
+            System.out.println(e.toString());
         } catch (IOException e) {
             System.out.println(e.toString());
         }
     }
+
+
     private void clientesSin() {
         try (BufferedWriter bfwClientes = new BufferedWriter(new FileWriter("clientesSin.csv"))) {
             for (Cliente c : clientes.values()) {
@@ -152,26 +274,21 @@ public class Examenpersistencia {
 
     }
 
-    private double gastoTotal(String dni) {
+    private double gastoTotal(Cliente c) {
         double total = 0;
         for (Pedido pedido : pedidos) {
-            if (pedido.getIdPedido().equals(dni)) {
-                for (LineaPedido L : pedido.getCestaCompra()) {
-                    total += (articulos.get(L.getIdArticulo()).getPvp())
-                            * L.getUnidades();
-                }
+            if (pedido.getClientePedido().equals(c)) {
+                total += total + totalPedido(pedido);
             }
-
         }
         return total;
-
     }
 
     private boolean pedidoRealizado(String dni) {
         return
                 pedidos.stream().anyMatch(p -> p.getClientePedido().getDni().equals(dni));
     }
-
+    
     public void clientesTxtLeerCon() {
         // LEEMOS LOS CLIENTES DESDE EL ARCHIVO .csv A UNA COLECCION HASHMAP AUXILIAR Y LA IMPRIMIMOS
         HashMap<String, Cliente> clientesAux = new HashMap();
@@ -181,11 +298,9 @@ public class Examenpersistencia {
                 Cliente c = new Cliente(atributos[0], atributos[1], atributos[2], atributos[3]);
                 clientesAux.put(atributos[0], c);
             }
-
         } catch (IOException e) {
             System.out.println(e.toString());
         }
-
         clientesAux.values().forEach(System.out::println);
     }
 
@@ -203,4 +318,69 @@ public class Examenpersistencia {
         }
         clientesAux.values().forEach(System.out::println);
     }
+
+    public void clientesTxtLeer1000() {
+        // LEEMOS LOS CLIENTES DESDE EL ARCHIVO .csv A UNA COLECCION HASHMAP AUXILIAR Y LA IMPRIMIMOS
+        HashMap<String, Cliente> clientesAux = new HashMap();
+        try (Scanner scClientes = new Scanner(new File("clientes1000.csv"))) {
+            while (scClientes.hasNextLine()) {
+                String[] atributos = scClientes.nextLine().split("[,]");
+                Cliente c = new Cliente(atributos[0], atributos[1], atributos[2], atributos[3]);
+                clientesAux.put(atributos[0], c);
+            }
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+        clientesAux.values().forEach(System.out::println);
+    }
+
+    public double totalPedido(Pedido p) {
+        double total = 0;
+        for (LineaPedido L : p.getCestaCompra()) {
+
+
+            total += (articulos.get(L.getIdArticulo()).getPvp())
+                    * L.getUnidades();
+        }
+        return total;
+    }
+
+    public void pedidosClientes() {
+        try (BufferedWriter bfwClientesPedidos = new BufferedWriter(new FileWriter("clientesPedidos.csv"))) {
+       for (Cliente c : clientes.values()) {
+           String dni= c.getDni();
+
+           bfwClientesPedidos.write(c.getDni() + "," + c.getNombre() + "," + c.getTelefono() + "," + c.getEmail()  + " Tiene tantos pedidos " + pedidos.stream().filter(p->p.getClientePedido().equals(c)).count() + "\n");
+       }
+
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.toString());
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+        }
+    public void articuloIdVendido(){
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Introduce el id del articulo:");
+        String idArticulo = sc.next();
+        pedidos.stream().filter(p -> p.getCestaCompra().stream().anyMatch(l -> l.getIdArticulo().equals(idArticulo))).forEach(System.out::println);
+        for (Pedido p : pedidos) {
+            System.out.println("El articulo con id " + idArticulo + " se ha vendido " +
+                    articuloEnPedido(idArticulo, p) + " veces en el pedido " + p.getIdPedido());
+
+        }
+    }
+    public int articuloEnPedido (String idArticulo, Pedido p) {
+        try {
+
+            return p.getCestaCompra().stream().filter(l -> l.getIdArticulo().equals(idArticulo)).findFirst().get().getUnidades();
+
+        } catch (NoSuchElementException e) {
+            return 0;
+        }
+
+    }
+// un listado cuando recibe un id articulo ordenado de mayor a menor con streams, cual es el articulo mas vendido y el que menos con streams
 }
