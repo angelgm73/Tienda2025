@@ -36,7 +36,7 @@ public class Tienda2025 implements Serializable {
     
     public static void main(String[] args) {
         Tienda2025 t = new Tienda2025();
-        //t.cargaDatos();ç
+        //t.cargaDatos();
         t.leerArchivos();
         t.menu();
         
