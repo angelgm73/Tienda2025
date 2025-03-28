@@ -36,6 +36,7 @@ import java.util.Scanner;
         t.cargaDatos();
         t.menu();
 
+
     }
 
 
@@ -89,9 +90,12 @@ import java.util.Scanner;
             System.out.println("\t\t\t\t5 - Calcular stock");
             System.out.println("\t\t\t\t6 - Obtener nombre cliente");
             System.out.println("\t\t\t\t7 - Obtener articulso por precio");
+            System.out.println("\t\t\t\t8 - Buscar articulo por nombre");
+            System.out.println("\t\t\t\t9 - Ordenar articulo por stock");
+            System.out.println("\t\t\t\t10 -Ingresos totales");
+            System.out.println("\t\t\t\t11 -Exportar ingresos totales");
 
-
-            System.out.println("\t\t\t\t9 - SALIR");
+            System.out.println("\t\t\t\t100 - SALIR");
             try {
                 opcion = sc.nextInt();
             } catch (InputMismatchException e) {
@@ -102,7 +106,7 @@ import java.util.Scanner;
 
             switch (opcion) {
                 case 1:
-                crearArchivosPorCliente();
+                    crearArchivosPorCliente();
                     break;
                 case 2:
                     leerArchivos();
@@ -122,9 +126,20 @@ import java.util.Scanner;
                 case 7:
                     obtenerArticulosPorPrecio();
                     break;
-
+                case 8:
+                    BuscarArticulo();
+                    break;
+                case 9:
+                    articulosPorStock();
+                    break;
+                case 10:
+                    verIngresosTotales();
+                    break;
+                case 11:
+                    exportarIngresosTotales();
+                    break;
             }
-        } while (opcion != 9);
+        } while (opcion != 100);
     }
 
     public void crearArchivosPorCliente() {
@@ -165,7 +180,8 @@ import java.util.Scanner;
 
         System.out.println("Se han creado " + contadorArchivos + " archivos de pedidos de clientes.");
     }
-    public void leerArchivos(){
+
+    public void leerArchivos() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Ingrese el DNI del cliente");
         String dni = sc.nextLine();
@@ -194,6 +210,7 @@ import java.util.Scanner;
             System.out.println("Error al leer el archivo: " + e.getMessage());
         }
     }
+
     public void ordenarClientesGasto() {
         Map<Cliente, Double> gastoPorCliente = new HashMap<>();
 
@@ -223,60 +240,110 @@ import java.util.Scanner;
             System.out.printf("Cliente: %s | Gasto Total: %.2f€\n", entry.getKey().getNombre(), entry.getValue());
         }
     }
-       public void obtenerPedidosCliente() {
+
+    public void obtenerPedidosCliente() {
         ArrayList<Pedido> pedidosCliente = new ArrayList<>();
         Scanner sc = new Scanner(System.in);
         System.out.println("Ingrese el DNI del cliente");
         String dni = sc.nextLine();
-        if(!clientes.containsKey(dni)){
+        if (!clientes.containsKey(dni)) {
             System.out.println("El cliente no existe");
             return;
-        }else
+        } else
 
 
+            for (Pedido pedido : pedidos) {
+                if (pedido.getClientePedido().getDni().equals(dni)) {
+                    pedidosCliente.add(pedido);
+                }
+            }
+        if (pedidosCliente.isEmpty()) {
+            System.out.println("El cliente no existe");
+        } else
+            System.out.println("El cliente tiene " + pedidosCliente.size() + " pedidos");
+    }
 
-
-        for (Pedido pedido : pedidos) {
-         if(pedido.getClientePedido().getDni().equals(dni)){
-             pedidosCliente.add(pedido);
-         }
-        }
-           if(pedidosCliente.isEmpty()){
-               System.out.println("El cliente no existe");
-           }else
-               System.out.println("El cliente tiene " + pedidosCliente.size() + " pedidos");
-       }
-       public void calcularStockTotal (){
+    public void calcularStockTotal() {
         Scanner sc = new Scanner(System.in);
-           System.out.println("Ingrese el ID del articulo");
-           String idArticulo = sc.nextLine();
-           if (!articulos.containsKey(idArticulo)) {
-               System.out.println("El articulo no existe");
-               return;
-           }
-             int stocktotal = articulos.values().stream().filter(articulo -> articulo.getIdArticulo().equals(idArticulo)).mapToInt(Articulo::getExistencias).sum();
-           System.out.println("El stock total del articulo " + idArticulo + " es: " + stocktotal);
-       }
-       public void buscarClientePorNombre(){
+        System.out.println("Ingrese el ID del articulo");
+        String idArticulo = sc.nextLine();
+        if (!articulos.containsKey(idArticulo)) {
+            System.out.println("El articulo no existe");
+            return;
+        }
+        int stocktotal = articulos.values().stream().filter(articulo -> articulo.getIdArticulo().equals(idArticulo)).mapToInt(Articulo::getExistencias).sum();
+        System.out.println("El stock total del articulo " + idArticulo + " es: " + stocktotal);
+    }
+
+    public void buscarClientePorNombre() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Ingrese el nombre del cliente");
         String nombre = sc.nextLine();
-         Cliente clienteEncontrado =clientes.values().stream().filter(cliente -> cliente.getNombre().equalsIgnoreCase(nombre)).findFirst().orElse(null);
-         if(clienteEncontrado != null){
-             System.out.println("Cliente encontrado " + clienteEncontrado );
+        Cliente clienteEncontrado = clientes.values().stream().filter(cliente -> cliente.getNombre().equalsIgnoreCase(nombre)).findFirst().orElse(null);
+        if (clienteEncontrado != null) {
+            System.out.println("Cliente encontrado " + clienteEncontrado);
 
-         }else{
-             System.out.println("El cliente no existe");
-         }
-       }
-       public void obtenerArticulosPorPrecio(){
-           Scanner sc = new Scanner(System.in);
-           System.out.println("Ingrese el precio minimo");
-           double min = sc.nextDouble();
-           System.out.println("Ingrese el precio maximo");
-           double max = sc.nextDouble();
-          articulos.values().stream().filter(articulo -> articulo.getPvp() >= min && articulo.getPvp() <= max).forEach(articulo -> System.out.println("El articulo con ID " + articulo.getIdArticulo()+ " tiene un precio de " + articulo.getPvp() + "€"));
+        } else {
+            System.out.println("El cliente no existe");
+        }
+    }
 
-       }
+    public void obtenerArticulosPorPrecio() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Ingrese el precio minimo");
+        double min = sc.nextDouble();
+        System.out.println("Ingrese el precio maximo");
+        double max = sc.nextDouble();
+        articulos.values().stream().filter(articulo -> articulo.getPvp() >= min && articulo.getPvp() <= max).forEach(articulo -> System.out.println("El articulo con ID " + articulo.getIdArticulo() + " tiene un precio de " + articulo.getPvp() + "€"));
+
+    }
+
+    public boolean buscarArticuloPorNombre(String nombre) {
+
+        Boolean encontrado = false;
+        for (Articulo a : articulos.values()) {
+            if (a.getDescripcion().contains(nombre)) {
+                encontrado = true;
+                break;
+            }
+        }
+        return encontrado;
+    }
+
+    public void BuscarArticulo() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Ingrese el nombre del articulo");
+        String nombre = sc.nextLine().toUpperCase();
+        if (buscarArticuloPorNombre(nombre)) {
+            System.out.println("Encontrado");
+        }
+    }
+
+    public void articulosPorStock() {
+        articulos.values().stream().sorted(Comparator.comparing(Articulo::getExistencias).reversed()).forEach(System.out::println);
+    }
+
+    public double ingresosTotales() {
+        double totalingresos = pedidos.stream().flatMap(pedido -> pedido.getCestaCompra().stream()).mapToDouble(linea -> {
+            Articulo articulo = articulos.get(linea.getIdArticulo());
+            return articulo != null ? linea.getUnidades() * articulo.getPvp() : 0;
+        }).sum();
+
+        return totalingresos;
+    }
+    public void verIngresosTotales(){
+        System.out.println("Los ingresos totales son " + ingresosTotales() + " 💶");
+    }
+
+    private void exportarIngresosTotales() {
+        try (BufferedWriter bfwClientes = new BufferedWriter(new FileWriter("ingresosTotales.csv"))) {
+            double totalIngresos = ingresosTotales();
+            bfwClientes.write("Ingresos totales son " + totalIngresos + "💶");
+        } catch (FileNotFoundException e) {
+            System.out.println(e.toString());
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+    }
 }
 
