@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class Tienda2025 implements Serializable {
-    Scanner sc = new Scanner(System.in);
+
     private ArrayList<Pedido> pedidos;
     private HashMap<String, Articulo> articulos;
     private HashMap<String, Cliente> clientes;
@@ -36,23 +36,26 @@ public class Tienda2025 implements Serializable {
     
     public static void main(String[] args) {
         Tienda2025 t = new Tienda2025();
-        //t.cargaDatos();ç
-        t.leerArchivos();
+        //t.cargaDatos();
+        //t.leerArchivos();
+        t= t.leerPersistenciatienda();
         t.menu();
         
         t.backup();
+
       
     }
     
     //<editor-fold defaultstate="collapsed" desc="MENÚS">
     private void menu() {
-        
+        Scanner sc = new Scanner(System.in);
         int opcion = 0;
         do {
             System.out.println("\n\n\n\n\n\t\t\t\tTIENDA");
             System.out.println("\t\t\t\t1 - PEDIDOS");
             System.out.println("\t\t\t\t2 - ARTICULOS");
             System.out.println("\t\t\t\t3 - CLIENTES");
+            System.out.println("\t\t\t\t4 - ARCHIVO TIENDA");
             System.out.println("\t\t\t\t9 - SALIR");
             try {
                 opcion = sc.nextInt();
@@ -72,13 +75,17 @@ public class Tienda2025 implements Serializable {
                 case 3:
                     menuClientes();
                     break;
+                case 4:
+                    persistenciaTienda();
+                    break;
+
            
             }
         } while (opcion != 9);
     }
     
     private void menuPedidos() {
-        
+        Scanner sc = new Scanner(System.in);
         int opcion = 0;
         do {
             System.out.println("\n\n\n\n\n\t\t\t\tPEDIDOS");
@@ -122,7 +129,7 @@ public class Tienda2025 implements Serializable {
     }
     
     private void menuArticulos() {
-   
+        Scanner sc = new Scanner(System.in);
         int opcion = 0;
         do {
             System.out.println("\n\n\n\n\n\t\t\t\tARTICULOS");
@@ -169,6 +176,7 @@ public class Tienda2025 implements Serializable {
        
         int opcion = 0;
         do {
+            Scanner sc = new Scanner(System.in);
             System.out.println("\n\n\n\n\n\t\t\t\tCLIENTES");
             System.out.println("\t\t\t\t1 - NUEVO CLIENTE");
             System.out.println("\t\t\t\t2 - MODIFICAR CLIENTE");
@@ -235,6 +243,7 @@ public class Tienda2025 implements Serializable {
     }
     
     public void nuevoPedido() {
+        Scanner sc = new Scanner(System.in);
         ArrayList<LineaPedido> cestaCompraAux = new ArrayList<>();
         String dniT, idT, opc, pedidasS;
         int pedidas = 0;
@@ -363,6 +372,7 @@ public class Tienda2025 implements Serializable {
     
     private void listadoPedidos() {
         System.out.println("Como desea ver los pedidos");
+        Scanner sc = new Scanner(System.in);
          int opcion= 0;
          do{
              System.out.println("\t\t\t\t1 - IMPORTE TOTAL");
@@ -457,6 +467,7 @@ public class Tienda2025 implements Serializable {
     }
     
     private void listadoArticulos() {
+        Scanner sc = new Scanner(System.in);
         System.out.println("Como desea ver sus articulos todos juntos o por secciones?:");
         int opcion = 0;
         do {
@@ -543,6 +554,7 @@ public class Tienda2025 implements Serializable {
     }
         
      private void reponerArticulos(){
+         Scanner sc = new Scanner(System.in);
          System.out.println("Introduce el codigo del articulo a reponer");
          String id = sc.next();
          if(!articulos.containsKey(id)){
@@ -562,7 +574,7 @@ public class Tienda2025 implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="GESTIÓN DE CLIENTES">
     private void nuevoCliente() {
-   
+        Scanner sc = new Scanner(System.in);
         System.out.print("Introduce el DNI del nuevo cliente: ");
         String dni = sc.next().toUpperCase();
         if (clientes.containsKey(dni)) {
@@ -581,7 +593,7 @@ public class Tienda2025 implements Serializable {
     }
     
     private void modificarCliente() {
-       
+        Scanner sc = new Scanner(System.in);
         System.out.print("Introduce el DNI del cliente a modificar: ");
         String dni = sc.next().toUpperCase();
         if (!clientes.containsKey(dni)) {
@@ -606,7 +618,7 @@ public class Tienda2025 implements Serializable {
     }
     
     private void eliminarCliente() {
-       
+        Scanner sc = new Scanner(System.in);
         System.out.print("Introduce el DNI del cliente a eliminar: ");
         String dni = sc.next().toUpperCase();
         if (!clientes.containsKey(dni)) {
@@ -699,7 +711,34 @@ public class Tienda2025 implements Serializable {
         } catch (IOException e) {
                  System.out.println(e.toString());
         } 
-    }  
+    }
+     public void persistenciaTienda(){
+        try (ObjectOutputStream oosTienda = new ObjectOutputStream(new FileOutputStream("tienda.dat"));){
+
+            oosTienda.writeObject(this);
+            System.out.println("Tienda guardada con exito 👌");
+
+        } catch (FileNotFoundException e){
+            System.out.println(e.toString());
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+     }
+     public Tienda2025 leerPersistenciatienda(){
+        //Sirve para guardar la tienda entera
+        Tienda2025 t = new Tienda2025();
+        try(ObjectInputStream oistienda =new ObjectInputStream(new FileInputStream("tienda.dat"))){
+            t = (Tienda2025) oistienda.readObject();
+
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Archivo no encontrado " + e.toString());
+
+        } catch (ClassNotFoundException | IOException e) {
+            System.out.println("Error al leer la tienda " + e.toString());
+        }
+         return t;
+     }
     public void backup(){
         try (ObjectOutputStream oosArticulos = new ObjectOutputStream(new FileOutputStream("articulos.dat"));
             ObjectOutputStream oosClientes = new ObjectOutputStream(new FileOutputStream("clientes.dat"));
