@@ -83,6 +83,7 @@ import java.util.Scanner;
             System.out.println("\n\n\n\n\n\t\t\tTAREA 20 03 2025");
             System.out.println("\t\t\t\t1 - Crear archivos");
             System.out.println("\t\t\t\t2 - DNI  para leer archivo");
+            System.out.println("\t\t\t\t3 - Crear archivo por cliente");
 
             System.out.println("\t\t\t\t9 - SALIR");
             try {
@@ -101,7 +102,7 @@ import java.util.Scanner;
                     leerArchivos();
                     break;
                 case 3:
-
+                    PersistenciaClientes();
                     break;
 
             }
@@ -181,6 +182,31 @@ import java.util.Scanner;
         System.out.println("Articulos con stock bajo" + limitestock);
         articulos.values().stream().filter(a -> a.getExistencias() <= limitestock).sorted(Comparator.comparing(Articulo::getExistencias)).forEach(a -> System.out.printf("%s - Stock: d%%n", a.getDescripcion(), a.getExistencias()));
     }
+   public void PersistenciaClientes(){
+        boolean tienepedidos;
+        for (Cliente cliente : clientes.values()){
+           tienepedidos = false;
+           for (Pedido pedido : pedidos){
+               if (pedido.getClientePedido().getDni().equals(cliente.getDni())){
+                   tienepedidos = true;
+                   break;
+               }
 
+           }if (tienepedidos){
+               String nombreArchivo = "ClientePedido_" + cliente.getNombre().trim() + ".dat";
+                try (FileOutputStream fos = new FileOutputStream(nombreArchivo);
+                     ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+                    oos.writeObject(nombreArchivo);
+
+
+                    System.out.println("Archivo creado: " + nombreArchivo);
+
+                } catch (IOException e) {
+                    System.out.println("Error al crear el archivo " + nombreArchivo + ": " + e.getMessage());
+                }
+            }
+        }
+   }
 
 }
