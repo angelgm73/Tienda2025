@@ -95,7 +95,7 @@ import java.util.Scanner;
 
             switch (opcion) {
                 case 1:
-                crearArchivosPorCliente();
+                    crearArchivosPorCliente();
                     break;
                 case 2:
                     leerArchivos();
@@ -146,7 +146,8 @@ import java.util.Scanner;
 
         System.out.println("Se han creado " + contadorArchivos + " archivos de pedidos de clientes.");
     }
-    public void leerArchivos(){
+
+    public void leerArchivos() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Ingrese el DNI del cliente");
         String dni = sc.nextLine();
@@ -168,12 +169,18 @@ import java.util.Scanner;
                 }
             }
         } catch (NoSuchElementException e) {
-            System.out.println(e.getMessage());
+            System.out.println("DNI ERRONEO ESE DNI NO EXISTE VOY A LLAMAR A LA POLICIA");
         } catch (FileNotFoundException e) {
             System.out.println("No se encontró el archivo de pedidos para este cliente");
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Error al leer el archivo: " + e.getMessage());
         }
     }
+
+    public void stockBajo(int limitestock) {
+        System.out.println("Articulos con stock bajo" + limitestock);
+        articulos.values().stream().filter(a -> a.getExistencias() <= limitestock).sorted(Comparator.comparing(Articulo::getExistencias)).forEach(a -> System.out.printf("%s - Stock: d%%n", a.getDescripcion(), a.getExistencias()));
     }
 
+
+}
