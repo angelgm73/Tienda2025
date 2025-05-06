@@ -22,21 +22,25 @@ public class Tienda2025Test {
     
     public Tienda2025Test() {
     }
-    
+
     @BeforeAll
     public static void setUpClass() {
+        // Código de inicialización que se ejecuta una vez antes de todas las pruebas
     }
-    
+
     @AfterAll
     public static void tearDownClass() {
+        // Código de limpieza que se ejecuta una vez después de todas las pruebas
     }
-    
+
     @BeforeEach
     public void setUp() {
+        // Código que se ejecuta antes de cada prueba
     }
-    
+
     @AfterEach
     public void tearDown() {
+        // Código que se ejecuta después de cada prueba
     }
 
     /**
