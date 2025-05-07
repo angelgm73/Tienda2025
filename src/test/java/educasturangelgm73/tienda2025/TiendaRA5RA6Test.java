@@ -1,3 +1,5 @@
+package educasturangelgm73.tienda2025;
+
 
 import educasturangelgm73.tienda2025.Tienda2025;
 import educasturangelgm73.tienda2025.Excepciones.StockAgotado;
@@ -46,7 +48,7 @@ public class TiendaRA5RA6Test {
     @Test
     public void testCargaDatos() {
         assertAll(
-                () -> assertEquals(5, t.getArticulos().size()),
+                () -> assertEquals(8, t.getArticulos().size()),
                 () -> assertEquals(5, t.getClientes().size()),
                 () -> assertEquals(5, t.getPedidos().size())
         );

@@ -36,11 +36,11 @@ public class Tienda2025 implements Serializable {
     
     public static void main(String[] args) {
         Tienda2025 t = new Tienda2025();
-        //t.cargaDatos();
-        t.leerArchivos();
+        t.cargaDatos();
+        //t.leerArchivos();
         t.menu();
         
-        t.backup();
+        //t.backup();
       
     }
     
@@ -640,7 +640,7 @@ public class Tienda2025 implements Serializable {
     }      
             return total;
     }         
-    public void cargaDatos() {
+  public void cargaDatos() {
         // Clientes iniciales
         clientes.put("80580845T", new Cliente("80580845T", "ANA", "658111111", "ana@gmail.com"));
         clientes.put("36347775R", new Cliente("36347775R", "LOLA", "649222222", "lola@gmail.com"));
