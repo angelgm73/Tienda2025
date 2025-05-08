@@ -254,14 +254,7 @@ public void buscarPedidosPorCliente() {
     
     
     public double totalCliente(Cliente c) {
-        double total=0;
-            for (Pedido p: pedidos){
-                if (p.getClientePedido().equals(c)) {
-                    total+= totalPedido(p);
-                }
-            }
-           
-            
+   
         return pedidos.stream().filter(p -> p.getClientePedido().equals(c)).mapToDouble(p -> totalPedido(p)).sum();
     }
     
